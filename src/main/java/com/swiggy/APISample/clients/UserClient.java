@@ -1,63 +1,47 @@
 package com.swiggy.APISample.clients;
 
-import com.swiggy.APISample.dto.request.CreateUserRequest;
-import com.swiggy.APISample.utils.UserUtils;
+import com.swiggy.APISample.utils.RestAssuredSpecifications;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-@Component
 public class UserClient {
 
-    @Autowired
-    UserUtils userUtils;
-
-    @Value("${baseUrl}")
-    private String baseUrl;
-
-    private static final String CREATE_USERS_RESOURCE_PATH = "/api/users";
-    private static final String FETCH_USER_RESOURCE_PATH = "/api/users/{id}";
+    private static final String CREATE_USERS_PATH = "/api/users";
+    private static final String FETCH_USER_PATH = "/api/users/{id}";
 
     /**
-     * Build a common RequestSpecification with base configuration
-     */
-    private RequestSpecification getRequestSpec() {
-        return RestAssured.given()
-                .baseUri(baseUrl)
-                .headers(userUtils.getXpiHeaders())
-                .contentType(ContentType.JSON)
-                .log().all();
-    }
-
-    /**
-     * Create a new user with the provided request data
+     * Create User (POST)
      */
     public Response createUserData(Object createUserRequest) {
-        return getRequestSpec()
+
+        return RestAssured
+                .given()
+                .spec(RestAssuredSpecifications.getRequestSpecification())
                 .body(createUserRequest)
+                .contentType(ContentType.JSON)
+                .log().all()
                 .when()
-                .post(CREATE_USERS_RESOURCE_PATH)
+                .post(CREATE_USERS_PATH)
                 .then()
                 .log().all()
-                .extract()
-                .response();
+                .extract().response();
     }
 
     /**
-     * Fetch user data by ID
+     * Fetch User by ID (GET)
      */
-    public Response fetchUserData(String id) {
-        return getRequestSpec()
+    public Response fetchUserById(String id) {
+
+        return RestAssured
+                .given()
+                .spec(RestAssuredSpecifications.getRequestSpecification())
                 .pathParam("id", id)
+                .log().all()
                 .when()
-                .get(FETCH_USER_RESOURCE_PATH)
+                .get(FETCH_USER_PATH)
                 .then()
                 .log().all()
-                .extract()
-                .response();
+                .extract().response();
     }
 }

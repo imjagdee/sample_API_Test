@@ -17,7 +17,7 @@ src/
 │   │   │       ├── CreateUserResponse.java
 │   │   │       └── GetUserResponse.java
 │   │   ├── utils/
-│   │   │   ├── UserUtils.java           # Header utilities
+│   │   │   ├── ConfigReader.java           # config utilities
 │   │   │   ├── DataMapper.java          # JSON to Object mapping
 │   │   │   └── RestAssuredSpecifications.java  # REST Assured spec builders
 │   │   └── validator/

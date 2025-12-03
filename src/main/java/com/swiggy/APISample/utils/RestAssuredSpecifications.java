@@ -1,46 +1,37 @@
 package com.swiggy.APISample.utils;
 
+import com.swiggy.APISample.commons.UserConstants;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  * REST Assured Specifications Builder
- * Centralized configuration for request and response specifications
+ * Plain Java version (No Spring Boot)
  */
-@Component
 public class RestAssuredSpecifications {
 
-    @Autowired
-    private UserUtils userUtils;
+    private static final String baseUrl = ConfigReader.get("baseUrl");;
+    private static final String apiKey = ConfigReader.get("x.api.value");
 
-    @Value("${baseUrl}")
-    private String baseUrl;
 
     /**
-     * Build a common request specification
+     * Build a common Request Specification
      */
-    public RequestSpecification getRequestSpecification() {
+    public static RequestSpecification getRequestSpecification() {
         return new RequestSpecBuilder()
                 .setBaseUri(baseUrl)
-                .addHeaders(userUtils.getXpiHeaders().entrySet().stream()
-                        .collect(java.util.stream.Collectors.toMap(
-                                java.util.Map.Entry::getKey,
-                                e -> e.getValue().toString()
-                        )))
+                .addHeader(UserConstants.xApiKey, apiKey)
                 .setContentType(ContentType.JSON)
                 .build();
     }
 
     /**
-     * Build response specification for successful responses
+     * Response spec for success responses
      */
-    public ResponseSpecification getSuccessResponseSpecification(int expectedStatusCode) {
+    public static ResponseSpecification getSuccessResponseSpecification(int expectedStatusCode) {
         return new ResponseSpecBuilder()
                 .expectStatusCode(expectedStatusCode)
                 .expectContentType(ContentType.JSON)
@@ -48,9 +39,9 @@ public class RestAssuredSpecifications {
     }
 
     /**
-     * Build response specification for JSON responses
+     * Response spec for JSON content type
      */
-    public ResponseSpecification getJsonResponseSpecification() {
+    public static ResponseSpecification getJsonResponseSpecification() {
         return new ResponseSpecBuilder()
                 .expectContentType(ContentType.JSON)
                 .build();
